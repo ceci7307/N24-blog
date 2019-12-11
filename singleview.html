@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>N24 blog</title>
+    <meta name="description" content="N24's blog om mode, tøj, sko og accesories.">
+    <!-- style css   -->
+    <link rel="stylesheet" href="style.css">
+    <!-- font  -->
+    <link href="https://fonts.googleapis.com/css?family=Heebo&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!--TEMPLATE-->
+    <section class="post-container">
+
+        <article class="post-article">
+            <div class="center-container">
+                <img class="data-post-billede" src="" alt=""> </div>
+            <div class="skribenten">
+                <p class="data-post-skribent"></p>
+                <img class="data-post-billede-skribent" src="" alt="">
+                <p class="data-post-dato"></p>
+            </div>
+            <div class="center-container">
+                <h1 class="data-post-titel"></h1>
+            </div>
+            <div class="data-post-tekst"></div>
+
+        </article>
+
+    </section>
+</body>
+<script>
+    // Til single view
+    let urlParams = new URLSearchParams(window.location.search);
+    let id = urlParams.get("id");
+    console.log(id);
+
+    // DOM loaded
+    document.addEventListener("DOMContentLoaded", getJSON);
+    // Hent json
+    async function getJSON() {
+        let jsonData = await fetch("http://digcon.dk/N24/wp-json/wp/v2/blog");
+        posts = await jsonData.json();
+        console.log(posts);
+        visPost();
+    }
+
+    // Viser og kloner
+    function visPost() {
+
+        let dest = document.querySelector(".post-container");
+
+        posts.forEach(post => {
+
+            if (post.id == id) {
+                dest.querySelector(".data-post-titel").textContent = post.title.rendered;
+                dest.querySelector(".data-post-skribent").textContent = post.acf.skribent;
+                dest.querySelector(".data-post-tekst").innerHTML = post.content.rendered;
+                dest.querySelector(".data-post-dato").textContent = post.acf.dato;
+                dest.querySelector(".data-post-billede").src = post.acf.splash_billede;
+                dest.querySelector(".data-post-billede-skribent").src = post.acf.foto_af_skribent;
+            }
+        })
+    }
+</script>
+
+</html>
